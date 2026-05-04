@@ -130,6 +130,164 @@ Standard ICSE threats structure:
 - Suggest concrete next steps that follow from the current work.
 - Never introduce new claims, results, or contributions in the conclusion.
 
+## Section-by-Section Deep Dives
+
+### 1. Abstract
+
+ICSE Research Track abstracts usually run 150 to 250 words and work best as a compact, self-contained argument. Use the four-part template: Problem → Gap → Approach → Result or Mechanism. For pre-results papers, replace the final result sentence with a concrete mechanism sentence. A strong ICSE abstract often has 5 to 7 sentences:
+
+1. **Problem sentence**: State the software engineering problem and why it matters. Keep it grounded in practice.
+2. **Gap sentence**: Explain what current tools, methods, datasets, or evaluations miss.
+3. **Approach sentence**: Name the proposed method, study, framework, or benchmark. If the paper has a named system, introduce it here.
+4. **Mechanism sentence**: Explain the core technical idea.
+5. **Evaluation sentence**: State the evaluation setting (datasets, benchmarks, subject systems, tools, RQs).
+6. **Result sentence**: Give the main quantitative or qualitative finding with concrete numbers when available.
+7. **Implication sentence**: State what the result means for researchers, tool builders, or practitioners.
+
+Pre-results variant replaces Result with Mechanism and skips numbers.
+
+**Do's**: Use 150-250 words. Make abstract self-contained. Define every acronym. Name the method. Include evaluation scale. Use active voice. Put strongest result near end. Make final sentence about implication.
+
+**Don'ts**: No citations. No undefined acronyms. No broad opening ("Software is everywhere"). No vague result language ("promising", "effective"). No listing all contributions mechanically. No claims the paper doesn't prove.
+
+### 2. Introduction
+
+ICSE Research Track introductions commonly use 5 to 7 paragraphs:
+
+- **P1 Problem and motivation**: Open with a concrete SE problem. Good ICSE introductions begin with a real task or failure mode. Avoid generic statements.
+- **P2 Gap**: State the missing capability. A strong gap: current methods can do A, but they fail under condition B, and this matters because B is common.
+- **P3 Named approach**: Introduce the paper's main artifact/study/method by name. State the core idea in one paragraph.
+- **P4-P5 Contributions**: Use 3-5 contribution items. Each must be evidence-bound. What counts: new method, tool, benchmark, dataset, empirical finding, reproducible artifact, validated improvement. What doesn't count: literature review, background, implementation without evaluation, restating method title.
+- **P6 Result preview**: Post-results: headline quantitative result. Pre-results: planned evaluation scope.
+- **P7 Roadmap**: One or two sentences. Keep it short and conventional.
+
+**Do's**: 5-7 paragraphs. Concrete problem first. Move quickly to gap. Name approach early. 3-5 contributions. Evidence-bound claims. Active voice.
+
+**Don'ts**: No broad software platitudes. No long history of the field. No hiding the approach. No more than 5 contributions. No claiming generality from narrow evidence. No roadmap that introduces new content.
+
+### 3. Background / Motivation / Challenges
+
+Use this section to deepen the problem. 3 to 5 paragraphs. Should not repeat the Introduction.
+
+- **P1 Concrete problem context**: Reframe the problem from a concrete perspective. Explain what makes the task difficult in practice. Narrower than Introduction.
+- **P2-P4 Explicit challenges**: Present 2-3 challenges. Each includes: technical obstacle, concrete manifestation in running example, why naive solutions fail, and design pressure created. Good challenge types for LLM+static analysis papers: noisy program evidence, missing semantic context, LLM overreach, scalability limits, precision-recall tension, verification gap.
+- **Final paragraph Challenge-to-design-goal bridge**: Map each challenge to a design goal explicitly. Make the Approach section feel inevitable.
+
+**Running example discipline**: Introduce one example in P1. Reuse in each challenge. Show how each challenge appears. Keep concrete: name artifact type, failure mode, decision needed.
+
+**Pattern anchors**: InferROI (two-phase LLM inference then static verification). TaintP2X (taint analysis + LLM pruning). LLM-Aided Partial Program Dependence Analysis (compact partial program evidence). ReinFix (static retrieval then LLM reasoning).
+
+**Do's**: Concrete challenges. Running example threaded. Design goal mapping. Precise static analysis limits. Precise LLM limits. Measured language ("ground", "check", "support").
+
+**Don'ts**: No restating Introduction. No generic challenges. No challenges method doesn't address. No "proves correctness" claims. No framing LLM as oracle. No survey-style multiple examples.
+
+### 4. Approach / Methodology / System Design
+
+Explain how the system works. Concrete but not an implementation manual.
+
+**Typical subsections**: 4.1 Design Goals (operational, from challenges). 4.2 Overview (full pipeline, input/output, figure). 4.3 Stage 1 Evidence/Retrieval/Pruning. 4.4 Stage 2 LLM Reasoning. 4.5 Stage 3 Static Checking/Verification (if applicable). 4.6 Implementation Boundary.
+
+**Two-phase decompositions for LLM+static analysis**:
+- LLM then static verification (InferROI pattern)
+- Static analysis then LLM pruning (TaintP2X pattern)
+- Partial program analysis then LLM reasoning (LλMDA pattern)
+- Static retrieval then LLM reasoning (ReinFix pattern)
+
+**Pipeline figure conventions**: Inputs left, outputs right. Static analysis and LLM visually distinct. Label intermediate artifacts. Use same names as subsection headings. Descriptive caption.
+
+**Algorithm/pseudocode**: Use for nontrivial control flow, filtering, ranking, iterative loops, checking procedures. Place after overview. Define inputs before, outputs after.
+
+**Terminology rules**: Prefer "ground", "check", "support", "verify against facts". Avoid "prove", "guarantee soundness", "ensure absence", "fully understand", "eliminate hallucinations" unless formally justified.
+
+**Weights/thresholds**: Describe as "implementation heuristics" unless empirically optimized. State when fixed across experiments.
+
+**Artifact boundaries**: End by defining what the system implements, what it consumes/produces, what's engineering vs method, what's outside contribution boundary. Don't introduce new contribution.
+
+**Do's**: Explicit stage boundaries. Define every intermediate artifact. Connect design goals to components. Clear LLM input/output. Pipeline figure for multi-stage. Pseudocode for loops/checking. Evidence-bound terminology. End with artifact boundary.
+
+**Don'ts**: No "we ask an LLM" if pipeline is the contribution. No hiding static analysis. No unsupported guarantees. No figure-text name mismatch. No undefined algorithm artifacts. No over-explaining prompts while under-explaining evidence. No new contribution at end.
+
+### 5. Evaluation / Experiments / Results
+
+Prove central claims with numbers, controlled comparisons, and error analysis.
+
+**Subsection order**:
+1. **Experimental Setup**: Datasets, benchmarks, tools, models, hardware, prompts, seeds, timeouts, filtering, labeling. Name all baselines. Define every metric. Report runs and aggregation for nondeterministic pipelines.
+2. **Research Questions**: 3-5 RQs. Each maps to one main claim. Evaluable questions.
+3. **Results per RQ**: Each RQ gets own subsection. Start with one-sentence summary. Present table/figure. Explain trends. End with explicit **Answer to RQn** paragraph.
+4. **Ablation Study**: Compare full method against variants removing one component. Same datasets, metrics, protocol. Each ablation tests a real design claim. Report effect as number. Explain gains and tradeoffs.
+5. **Case Studies**: One clear FP, one clear TP, one uncertain, one failure. For each: project source, warning type/CWE, code context, tool output, method output, ground truth, what it teaches.
+
+**Pre-results vs post-results**: NO visible Evaluation section with only protocol prose when results aren't ready. Either have numbers or reserve the section. After numbers: every claim includes named method, metric, numeric value, dataset.
+
+**Metrics table**: Compact table with Metric/Definition/Unit/Direction/Used for before first result. Results comparison table per major RQ with Dataset/Method/Baseline category/Precision/Recall/F1/Runtime columns.
+
+**Table/figure conventions**: Tables for comparisons, figures for trends. Reference before appearing. Descriptive captions. Bold best value when fair. Report negative results.
+
+**Do's**: 3-5 RQs answered explicitly. Setup before results. Named baselines. Numbers in every comparison. Same metrics for full method and ablations. Effectiveness AND efficiency. Root cause analysis. Nondeterminism controls. Case studies explain why.
+
+**Don'ts**: No evaluation-protocol-only section. No improvement claim without baseline+metric+number. No mixed datasets/metrics across baselines. No multi-component ablation without justification. No averages-only reporting. No cherry-picked cases. No hiding failures. No single-run results for nondeterministic tools. No invented results.
+
+### 6. Related Work
+
+Position the paper, not survey the field. Place AFTER method or evaluation.
+
+**Placement rule**: After Method or Evaluation. Do NOT place before the approach. Introduction may include gap paragraph with key citations.
+
+**Subsection structure**: 3-5 thematic groups (NOT one per paper). Themes: static analysis/SAST, false positive mitigation, LLMs for vulnerability, hybrid LLM+program analysis, nondeterminism/reproducibility, benchmarks/datasets.
+
+**Paragraph structure per theme**: (1) 2-3 sentences describing theme. (2) 1-2 distinguishing sentences. (3) Comparative ending.
+
+**Source labeling**: Label by actual venue (ICSE 2026 Research Track, ICSE SEIP, ICSE NIER, workshop, journal-first, arXiv preprint). Never call SEIP/workshop/NIER an "ICSE Research Track paper."
+
+**Evidence boundary**: Primary evidence: ICSE/FSE/ASE/ISSTA Research Track. Background: SEIP, workshop, NIER, journal-first, arXiv, tool docs.
+
+**Anti-laundry-list rule**: Synthesize, don't list. If a paragraph can be reordered sentence by sentence without changing meaning, it's a laundry list.
+
+**Do's**: Late placement. 3-5 thematic groups. Theme-first paragraphs. Comparative endings. Actual venue labels. ICSE RT papers as primary evidence. Specific differences.
+
+**Don'ts**: No early long Related Work. No one-paper-per-paragraph. No citation laundry list. No SEIP/workshop as primary evidence. No calling everything "ICSE". No implying prior paper studied something it didn't. No generic "our work is different". No attacking prior work.
+
+### 7. Discussion / Limitations / Threats to Validity
+
+Show understanding of boundaries. Honest but not self-defeating. Name limit, consequence, mitigation.
+
+**Structure**: Short Discussion subsection then Threats to Validity. 1-2 paragraphs per validity type.
+
+**Validity taxonomy**:
+- **Construct Validity**: Does the study measure what it claims? Label quality, duplicate examples, data leakage, metric fit, evaluation setting realism.
+- **Internal Validity**: Can the effect be attributed to the proposed method? Implementation correctness, baseline fairness, parameter selection, prompt construction, data preprocessing, nondeterminism controls.
+- **External Validity**: Where do findings generalize? Language, project type, task type, bug class, code size, benchmark source, model family, tool family. Separate capability claims from deployment claims.
+- **Conclusion Validity**: Does analysis support conclusions? Sample size, effect sizes, confidence intervals, statistical tests, variance, ablation design, negative results.
+- **Reproducibility**: What artifacts are released? Code, datasets, scripts, prompts, raw outputs, logs, Docker images, model identifiers, hashes. For nondeterministic systems: don't promise bit-exact reproduction. Support auditable reproduction instead.
+
+**Nondeterminism**: Treat as first-class concern, not footnote. Report runs, settings, versions, variance, aggregation rule.
+
+**Pre-results vs post-results**: Pre-results: design limitations and risks regardless of numbers. Post-results: tie threats to actual measured outcomes.
+
+**ICSE pattern anchors**: Nondeterminism studies (treat as measurable behavior), code model vulnerability studies (question dataset quality), AVR rethinking studies (separate memorization from generalization), LoopRepair-style (Discussion for design choices, Threats for systematic risk).
+
+**Do's**: Validity taxonomy. 1-2 paragraphs per type. Name limitation + consequence. Connect threat to mitigation. Dataset scope boundaries. Nondeterminism controls. Calibrated claims.
+
+**Don'ts**: No generic checklist. No self-defeating tone. No claimed generality beyond evidence. No hiding data leakage or label noise. No treating exact match as perfect. No new results in threats. No exact reproducibility promises for hosted systems.
+
+### 8. Conclusion
+
+Close the paper. 3-4 paragraphs. More specific than abstract, less detailed than results.
+
+- **P1**: Restate problem and approach (1-2 sentences). Don't repeat full motivation.
+- **P2**: Restate 3 contributions succinctly in compressed prose. Mirror Introduction contributions, not copy.
+- **P3**: Acknowledge limitations (1 compact paragraph). Steady tone: limitation narrows claim, doesn't erase contribution.
+- **P4 (optional)**: Future work. Grounded in results and limitations. Don't promise unrelated research agenda.
+
+**Pre-results vs post-results**: Pre-results: close with mechanism significance. Post-results: close with calibrated numeric claim with scope.
+
+**No new claims rule**: Conclusion can't introduce new datasets, baselines, metrics, case studies, explanations. Every claim must already be supported.
+
+**Do's**: 3-4 paragraphs. Problem+approach in P1. Three contributions in P2. Calibrated limitation in P3. Grounded future work in P4. Confident, precise, bounded tone.
+
+**Don'ts**: No repeating abstract sentences. No new results/interpretations. No overpromising. No vague impact language. No apologizing. No final sentence broader than evidence.
+
 ## Evidence Sourcing Convention
 
 ### Primary evidence: what can be called "ICSE Research Track"
@@ -156,12 +314,21 @@ These verified ICSE 2025/2026 Research Track papers can be used as structural mo
 | InferROI (Wang et al.) | 2025 | LLM inference + static analysis verification hybrid |
 | Code Language Models: How Far Are We? (Ding et al.) | 2025 | Dataset caution, quantitative-claim discipline |
 | Nondeterminism in SA Tools (Miao et al.) | 2025 | Static analysis reliability and threats framing |
+| ROCODE | 2025 | Repository-level code understanding and evaluation scope discipline |
 | npm Malicious Packages (Zahan et al.) | 2025 | Static pre-screening + LLM security review hybrid |
 | SAST Tools for Python (Liu et al.) | 2026 | SAST tool limitations and empirical framing |
 | LLM Vulnerability Discovery via Code Metrics (Weissberg et al.) | 2026 | Caution against shallow LLM vulnerability reasoning |
 | LLM-Aided Partial Program Dependence Analysis (Rong et al.) | 2026 | LLM-aided dependence context |
 | TaintP2X | 2026 | Static taint analysis + LLM-assisted FP pruning |
+| Out of Distribution Out of Luck | 2026 | Distribution shift, dataset scope, and external-validity framing |
 | ReinFix (Zhang et al.) | 2026 | Static analysis retrieves ingredients for LLM reasoning |
+| LoopRepair | 2026 | Repair-system design choices, case studies, and threats framing |
+| Rethinking AVR | 2026 | Memorization versus generalization in automated vulnerability repair |
+| Vulnerability Data Generation | 2026 | Benchmark/data generation scope and label-quality threats |
+| SymRadar | 2026 | Symbolic reasoning, vulnerability localization, and evidence ranking |
+| Repairing LLM Executions | 2026 | LLM execution repair, iterative feedback, and failure analysis |
+| INTENTFIX | 2026 | Intent-grounded repair and semantic constraint framing |
+| BFix | 2026 | Bug-fix generation, validation boundaries, and repair evaluation |
 
 ## Writing Style
 
